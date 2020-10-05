@@ -102,12 +102,16 @@ int main(int argc, char **argv)
         tst_free(root);
         free(pool);
         return stat;
-    } else if (argc == 3 && strcmp(argv[1], "--benchbloom") == 0) {
+    } else if (argc == 3 && strcmp(argv[1], "--bloom") == 0) {
         printf("check before searching...\n");
-        int stat = benchbloom_test(root, BENCH_TEST_FILE, LMAX, bloom);
+
+        printf("main bloom address = %p\n", &bloom);
+
+        int stat = benchbloom_test(root, BENCH_TEST_FILE, LMAX, &bloom);
         tst_free(root);
         free(pool);
         bloom_free(bloom);
+
         return stat;
     }
 

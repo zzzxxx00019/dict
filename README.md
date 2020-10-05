@@ -1,5 +1,5 @@
 # Ternary Search Tree (tst)
-
+# test!!!
 A ternary search tree is a binary search tree (bst) with an additional
 node pointer.
 

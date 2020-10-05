@@ -51,17 +51,6 @@ int main(int argc, char **argv)
     } else
         printf("REF mechanism\n");
 
-    char *Top = word;
-    char *pool = NULL;
-
-    if (CPYmask) {  // Only allacte pool in REF mechanism
-        pool = malloc(poolsize);
-        if (!pool) {
-            fprintf(stderr, "Failed to allocate memory pool.\n");
-            return 1;
-        }
-        Top = pool;
-    }
 
     FILE *fp = fopen(IN_FILE, "r");
 
@@ -72,6 +61,14 @@ int main(int argc, char **argv)
     t1 = tvgetf();
 
     bloom_t bloom = bloom_create(TableSize);
+    char *Top = word;
+    char *pool;
+
+    if (CPYmask) {
+        /* memory pool */
+        pool = (char *) malloc(poolsize * sizeof(char));
+        Top = pool;
+    }
 
     char buf[WORDMAX];
     while (fgets(buf, WORDMAX, fp)) {
@@ -82,7 +79,7 @@ int main(int argc, char **argv)
             j += (buf[i + j] == ',');
         }
         while (*Top) {
-            if (!tst_ins(&root, Top, REF)) { /* fail to insert */
+            if (!tst_ins_del(&root, Top, INS, REF)) { /* fail to insert */
                 fprintf(stderr, "error: memory exhausted, tst_insert.\n");
                 fclose(fp);
                 return 1;
@@ -104,6 +101,13 @@ int main(int argc, char **argv)
         int stat = bench_test(root, BENCH_TEST_FILE, LMAX);
         tst_free(root);
         free(pool);
+        return stat;
+    } else if (argc == 3 && strcmp(argv[1], "--benchbloom") == 0) {
+        printf("check before searching...\n");
+        int stat = benchbloom_test(root, BENCH_TEST_FILE, LMAX, bloom);
+        tst_free(root);
+        free(pool);
+        bloom_free(bloom);
         return stat;
     }
 
@@ -146,7 +150,7 @@ int main(int argc, char **argv)
                 res = NULL;
             else { /* update via tree traversal and bloom filter */
                 bloom_add(bloom, Top);
-                res = tst_ins(&root, Top, REF);
+                res = tst_ins_del(&root, Top, INS, REF);
             }
             t2 = tvgetf();
             if (res) {
@@ -220,7 +224,7 @@ int main(int argc, char **argv)
             printf("  deleting %s\n", word);
             t1 = tvgetf();
             /* FIXME: remove reference to each string */
-            res = tst_del(&root, word, REF);
+            res = tst_ins_del(&root, word, DEL, REF);
             t2 = tvgetf();
             if (res)
                 printf("  delete failed.\n");

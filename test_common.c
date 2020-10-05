@@ -98,15 +98,13 @@ int main(int argc, char **argv)
     printf("ternary_tree, loaded %d words in %.6f sec\n", idx, t2 - t1);
 
     if (argc == 3 && strcmp(argv[1], "--bench") == 0) {
+        printf("check ...\n");
         int stat = bench_test(root, BENCH_TEST_FILE, LMAX);
         tst_free(root);
         free(pool);
         return stat;
     } else if (argc == 3 && strcmp(argv[1], "--bloom") == 0) {
         printf("check before searching...\n");
-
-        printf("main bloom address = %p\n", &bloom);
-
         int stat = benchbloom_test(root, BENCH_TEST_FILE, LMAX, &bloom);
         tst_free(root);
         free(pool);

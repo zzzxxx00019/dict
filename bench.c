@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
 #include "bench.h"
@@ -52,6 +53,8 @@ int bench_test(const tst_node *root, char *out_file, const int max)
             j += (buf[i + j] == ',');
         }
 
+        // word[strlen(word)] = 0 ;
+
         t1 = tvgetf();
         tst_search_prefix(root, word, sgl, &sidx, max);
         t2 = tvgetf();
@@ -98,6 +101,8 @@ int benchbloom_test(const tst_node *root,
                 (buf[i + j] == ',' || buf[i + j] == '\n') ? '\0' : buf[i + j];
             j += (buf[i + j] == ',');
         }
+
+        // word[strlen(word)] = 0 ;
 
         t1 = tvgetf();
         if (bloom_test(*filter, word)) {

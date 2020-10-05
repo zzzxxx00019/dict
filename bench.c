@@ -5,7 +5,7 @@
 #include "bench.h"
 #include "bloom.h"
 
-#define DICT_FILE "random.txt"
+#define DICT_FILE "cities.txt"
 #define WORDMAX 256
 #define PREFIX_LEN 3
 
